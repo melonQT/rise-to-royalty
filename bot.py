@@ -447,7 +447,7 @@ async def challenge_gym(client, message):
         photo="https://graph.org/file/a52abd9ccb2be555e399b-89a794a27058b94855.jpg",  # Replace with actual file path or URL
         caption="Select a region to challenge a Gym Leader:",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Kanto", callback_data=f"region_Kanto_{original_user_id}"             InlineKeyboardButton("Johto", callback_data=f"region_Johto_{original_user_id}"),
+            [InlineKeyboardButton("Kanto", callback_data=f"region_Kanto_{original_user_id})"             InlineKeyboardButton("Johto", callback_data=f"region_Johto_{original_user_id}"),
              InlineKeyboardButton("Hoenn", callback_data=f"region_Hoenn_{original_user_id}"),
              InlineKeyboardButton("Sinnoh", callback_data=f"region_Sinnoh_{original_user_id}")],
             [InlineKeyboardButton("Unova", callback_data=f"region_Unova_{original_user_id}"),
