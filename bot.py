@@ -562,9 +562,9 @@ async def challenge_gym_leader(client, callback_query):
     if user.id not in pending_requests:
         pending_requests[user.id] = []
 
-    if group_id in pending_requests[user.id]:
-        await callback_query.answer("You already have a pending request for this gym! Please wait for a response.", show_alert=True)
-        return
+    if group_id in pending_requests.get(user.id, []):
+    await callback_query.answer("You already have a pending request for this gym! Please wait for a response.", show_alert=True)
+    return
 
     pending_requests[user.id].append(group_id)
 
