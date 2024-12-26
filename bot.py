@@ -672,56 +672,63 @@ async def challenge_elite(client, callback_query):
     await callback_query.answer()
 
 
-@app.on_callback_query(filters.regex(r"^accept_(.+)_(.+)$"))
+@app.on_callback_query(filters.regex(r"^accept_(\d+)_(.+)$"))
 async def accept_challenge(client, callback_query):
-    match = re.match(r"^accept_(.+)_(.+)$", callback_query.data)
-    user_id, group_id = int(match.groups())
-
-    chat_member = await client.get_chat_member(group_id, callback_query.from_user.id)
-    status = str(chat_member.status)
-    if status not in ["ChatMemberStatus.ADMINISTRATOR", "ChatMemberStatus.OWNER"]:
-        await callback_query.answer("You do not have the [ Authority ]", show_alert=True)
-        return
-
-    expiration_time = datetime.now() + timedelta(minutes=5)
-
-    invite_link = await client.create_chat_invite_link(
-        chat_id=group_id,
-        expire_date=expiration_time,
-        member_limit=1
-    )
-
-    await callback_query.message.edit_text(f"The challenge has been accepted!")
-
-    await client.send_message(
-        chat_id=int(user_id),
-        text=(
-            f"Your challenge has been accepted!\n"
-            f"Here's a temporary link to join the group (valid for 5 minutes):\n\n{invite_link.invite_link}"
-        )
-    )
+    match = re.match(r"^accept_(\d+)_(.+)$", callback_query.data)
     
-    if user_id in pending_requests and group_id in pending_requests[group_id]:
-        pending_requests[user_id].remove(group_id)
+    if match:
+        user_id_str, group_id = match.groups()
+        user_id = int(user_id_str)
+        
+        chat_member = await client.get_chat_member(group_id, callback_query.from_user.id)
+        status = str(chat_member.status)
+        
+        if status not in ["ChatMemberStatus.ADMINISTRATOR", "ChatMemberStatus.OWNER"]:
+            await callback_query.answer("You do not have the [ Authority ]", show_alert=True)
+            return
 
-    await callback_query.answer("Challenge accepted!")
+        expiration_time = datetime.now() + timedelta(minutes=5)
 
+        invite_link = await client.create_chat_invite_link(
+            chat_id=group_id,
+            expire_date=expiration_time,
+            member_limit=1
+        )
+
+        await callback_query.message.edit_text(f"The challenge has been accepted!")
+
+        await client.send_message(
+            chat_id=user_id,
+            text=(
+                f"Your challenge has been accepted!\n"
+                f"Here's a temporary link to join the group (valid for 5 minutes):\n\n{invite_link.invite_link}"
+            )
+        )
+        
+        if user_id in pending_requests and group_id in pending_requests[user_id]:
+            pending_requests[user_id].remove(group_id)
+
+        await callback_query.answer("Challenge accepted!")
 
 @app.on_callback_query(filters.regex(r"^decline_(\d+)_(.+)$"))
 async def decline_challenge(client, callback_query):
     match = re.match(r"^decline_(\d+)_(.+)$", callback_query.data)
-    user_id, group_id = int(match.groups())
-    print(callback_query.data)
     
-    chat_member = await client.get_chat_member(group_id, callback_query.from_user.id)
-    status = str(chat_member.status)
-    if status not in ["ChatMemberStatus.ADMINISTRATOR", "ChatMemberStatus.OWNER"]:
-        await callback_query.answer("You do not have the [Authority]", show_alert=True)
-        return
+    if match:
+        user_id_str, group_id = match.groups()
+        user_id = int(user_id_str)
 
-    await callback_query.message.edit_text(f"The challenge has been declined.")
-    await client.send_message(chat_id=int(user_id), text=f"Your challenge has been declined.")
-    if user_id in pending_requests and group_id in pending_requests[group_id]:
-        pending_requests[user_id].remove(group_id)
+        chat_member = await client.get_chat_member(group_id, callback_query.from_user.id)
+        status = str(chat_member.status)
+        
+        if status not in ["ChatMemberStatus.ADMINISTRATOR", "ChatMemberStatus.OWNER"]:
+            await callback_query.answer("You do not have the [Authority]", show_alert=True)
+            return
 
+        await callback_query.message.edit_text(f"The challenge has been declined.")
+        await client.send_message(chat_id=user_id, text=f"Your challenge has been declined.")
+        
+        if user_id in pending_requests and group_id in pending_requests[user_id]:
+            pending_requests[user_id].remove(group_id)
+            
 app.run()
