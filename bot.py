@@ -546,12 +546,14 @@ async def back_to_regions(client, callback_query):
 @app.on_callback_query(filters.regex(r"^gym_(.+)_(.+)$"))
 async def challenge_gym_leader(client, callback_query):
     match = re.match(r"^gym_(.+)_(.+)$", callback_query.data)
+    
     if not match:
         await callback_query.answer("Invalid gym data!", show_alert=True)
         return
 
     region, gym = match.groups()
     group_id = REGIONAL_GYM_GROUP_IDS.get(region, {}).get(gym)
+    
     if not group_id:
         await callback_query.answer("Gym not found!", show_alert=True)
         return
@@ -562,9 +564,9 @@ async def challenge_gym_leader(client, callback_query):
     if user.id not in pending_requests:
         pending_requests[user.id] = []
 
-    if group_id in pending_requests.get(user.id, []):
-    await callback_query.answer("You already have a pending request for this gym! Please wait for a response.", show_alert=True)
-    return
+    if group_id in pending_requests[user.id]:
+        await callback_query.answer("You already have a pending request for this gym! Please wait for a response.", show_alert=True)
+        return
 
     pending_requests[user.id].append(group_id)
 
@@ -582,8 +584,7 @@ async def challenge_gym_leader(client, callback_query):
     )
 
     await callback_query.answer("Challenge sent!")
-
-
+    
 
 @app.on_callback_query(filters.regex(r"^challenge_elite_(.+)_(.+)$"))
 async def challenge_elite(client, callback_query):
