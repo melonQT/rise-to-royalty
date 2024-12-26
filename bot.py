@@ -439,6 +439,7 @@ ELITE_GYM_GROUP_IDS = {
     },
 }
 
+
 @app.on_message(filters.command("joingym") & (filters.private | filters.chat(-1002023272364)))
 async def challenge_gym(client, message):
     original_user_id = message.from_user.id  # Store the original user's ID
@@ -447,15 +448,25 @@ async def challenge_gym(client, message):
         photo="https://graph.org/file/a52abd9ccb2be555e399b-89a794a27058b94855.jpg",  # Replace with actual file path or URL
         caption="Select a region to challenge a Gym Leader:",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Kanto", callback_data=f"region_Kanto_{original_user_id})"             InlineKeyboardButton("Johto", callback_data=f"region_Johto_{original_user_id}"),
-             InlineKeyboardButton("Hoenn", callback_data=f"region_Hoenn_{original_user_id}"),
-             InlineKeyboardButton("Sinnoh", callback_data=f"region_Sinnoh_{original_user_id}")],
-            [InlineKeyboardButton("Unova", callback_data=f"region_Unova_{original_user_id}"),
-             InlineKeyboardButton("Kalos", callback_data=f"region_Kalos_{original_user_id}"),
-             InlineKeyboardButton("Alola", callback_data=f"region_Alola_{original_user_id}"),
-             InlineKeyboardButton("Galar", callback_data=f"region_Galar_{original_user_id}")]
+            [
+                InlineKeyboardButton("Kanto", callback_data=f"region_Kanto_{original_user_id}"),
+                InlineKeyboardButton("Johto", callback_data=f"region_Johto_{original_user_id}")
+            ],
+            [
+                InlineKeyboardButton("Hoenn", callback_data=f"region_Hoenn_{original_user_id}"),
+                InlineKeyboardButton("Sinnoh", callback_data=f"region_Sinnoh_{original_user_id}")
+            ],
+            [
+                InlineKeyboardButton("Unova", callback_data=f"region_Unova_{original_user_id}"),
+                InlineKeyboardButton("Kalos", callback_data=f"region_Kalos_{original_user_id}")
+            ],
+            [
+                InlineKeyboardButton("Alola", callback_data=f"region_Alola_{original_user_id}"),
+                InlineKeyboardButton("Galar", callback_data=f"region_Galar_{original_user_id}")
+            ]
         ])
     )
+    
 
 
 @app.on_callback_query(filters.regex(r"^region_(\w+)_(\d+)$"))
