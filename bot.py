@@ -528,6 +528,19 @@ async def back_to_regions(client, callback_query):
         return
 
     await callback_query.message.edit_text(
+        "Select a region to challenge a Gym Leader:",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("Kanto", callback_data=f"region_Kanto_{original_user_id}"),
+             InlineKeyboardButton("Johto", callback_data=f"region_Johto_{original_user_id}"),
+             InlineKeyboardButton("Hoenn", callback_data=f"region_Hoenn_{original_user_id}"),
+             InlineKeyboardButton("Sinnoh", callback_data=f"region_Sinnoh_{original_user_id}")],
+            [InlineKeyboardButton("Unova", callback_data=f"region_Unova_{original_user_id}"),
+             InlineKeyboardButton("Kalos", callback_data=f"region_Kalos_{original_user_id}"),
+             InlineKeyboardButton("Alola", callback_data=f"region_Alola_{original_user_id}"),
+             InlineKeyboardButton("Galar", callback_data=f"region_Galar_{original_user_id}")]
+        ])
+    )
+    await callback_query.answer()
 
 
 @app.on_callback_query(filters.regex(r"^gym_(.+)_(.+)$"))
