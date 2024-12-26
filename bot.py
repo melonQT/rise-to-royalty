@@ -559,14 +559,14 @@ async def challenge_gym_leader(client, callback_query):
     user = callback_query.from_user
     username = f"@{user.username}" if user.username else "None"
 
-    if group_id not in pending_requests:
-        pending_requests[group_id] = []
+    if user.id not in pending_requests:
+        pending_requests[user.id] = []
 
-    if user.id in pending_requests[group_id]:
+    if group_id in pending_requests[user.id]:
         await callback_query.answer("You already have a pending request for this gym! Please wait for a response.", show_alert=True)
         return
 
-    pending_requests[group_id].append(user.id)
+    pending_requests[user.id].append(group_id)
 
     await client.send_message(
         chat_id=group_id,
@@ -675,7 +675,7 @@ async def challenge_elite(client, callback_query):
 @app.on_callback_query(filters.regex(r"^accept_(.+)_(.+)$"))
 async def accept_challenge(client, callback_query):
     match = re.match(r"^accept_(.+)_(.+)$", callback_query.data)
-    user_id, group_id = match.groups()
+    user_id, group_id = int(match.groups())
 
     chat_member = await client.get_chat_member(group_id, callback_query.from_user.id)
     status = str(chat_member.status)
@@ -701,8 +701,8 @@ async def accept_challenge(client, callback_query):
         )
     )
     
-    if group_id in pending_requests and user_id in pending_requests[group_id]:
-        pending_requests[group_id].remove(user_id)
+    if user_id in pending_requests and group_id in pending_requests[group_id]:
+        pending_requests[user_id].remove(group_id)
 
     await callback_query.answer("Challenge accepted!")
 
@@ -710,7 +710,7 @@ async def accept_challenge(client, callback_query):
 @app.on_callback_query(filters.regex(r"^decline_(\d+)_(.+)$"))
 async def decline_challenge(client, callback_query):
     match = re.match(r"^decline_(\d+)_(.+)$", callback_query.data)
-    user_id, group_id = match.groups()
+    user_id, group_id = int(match.groups())
     print(callback_query.data)
     
     chat_member = await client.get_chat_member(group_id, callback_query.from_user.id)
@@ -721,7 +721,7 @@ async def decline_challenge(client, callback_query):
 
     await callback_query.message.edit_text(f"The challenge has been declined.")
     await client.send_message(chat_id=int(user_id), text=f"Your challenge has been declined.")
-    if group_id in pending_requests and user_id in pending_requests[group_id]:
-        pending_requests[group_id].remove(user_id)
+    if user_id in pending_requests and group_id in pending_requests[group_id]:
+        pending_requests[user_id].remove(group_id)
 
 app.run()
