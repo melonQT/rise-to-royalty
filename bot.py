@@ -390,7 +390,7 @@ REGIONAL_GYM_GROUP_IDS = {
 
 ELITE_GYM_GROUP_IDS = {
     "Kanto": {
-        "Elite 1": -1002444392254,
+        "Elite 1": -1002178875844,
         "Elite 2": -1002220442828,
         "Elite 3": -1002177362651,
         "Elite 4": -1002191365623,
